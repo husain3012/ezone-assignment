@@ -1,4 +1,5 @@
 # Next.js With Prisma
+https://ezone-assignment-gm421zqe6-husain3012.vercel.app/
 
 ## Getting started
 
