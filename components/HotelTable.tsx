@@ -52,10 +52,10 @@ function Table({ columns, data, fetchData, loading, pageCount: controlledPageCou
       )}
       <table {...getTableProps()}>
         <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th className="bg-slate-400 border-2 p-1 sm:p-2 border-black" {...column.getHeaderProps()}>
+          {headerGroups.map((headerGroup, index) => (
+            <tr key={index} {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, idx) => (
+                <th key={idx} className="bg-slate-400 border-2 p-1 sm:p-2 border-black" {...column.getHeaderProps()}>
                   {column.render("Header")}
                   <span>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
                 </th>
@@ -65,13 +65,11 @@ function Table({ columns, data, fetchData, loading, pageCount: controlledPageCou
         </thead>
         <tbody style={{ opacity: loading ? 0.5 : 1 }} {...getTableBodyProps()}>
           {page.map((row, i) => {
-            prepareRow(row);
             return (
-              <tr className="p-3 " {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-
+              <tr key={i} className="p-3 " {...row.getRowProps()}>
+                {row.cells.map((cell, idx) => {
                   return (
-                    <td className="border-2 p-1 sm:p-2 w-6 md:w-auto" {...cell.getCellProps()}>
+                    <td key={idx} className="border-2 p-1 sm:p-2 w-6 md:w-auto" {...cell.getCellProps()}>
                       {cell.render("Cell")}
                     </td>
                   );
@@ -202,24 +200,27 @@ const HotelTable = ({ initialData, count }) => {
     return cols;
   }, [isDesktopOrLaptop]);
 
-  const fetchData = React.useCallback(async ({ pageSize, pageIndex }) => {
-    const fetchId = ++fetchIdRef.current;
-    setLoading(true);
-    if (fetchId === fetchIdRef.current) {
-      const response = await axios.get("/api/hotels", {
-        params: {
-          pageSize,
-          pageIndex,
-        },
-      });
+  const fetchData = React.useCallback(
+    async ({ pageSize, pageIndex }) => {
+      const fetchId = ++fetchIdRef.current;
+      setLoading(true);
+      if (fetchId === fetchIdRef.current) {
+        const response = await axios.get("/api/hotels", {
+          params: {
+            pageSize,
+            pageIndex,
+          },
+        });
 
-      setData(response.data);
-      setPageCount(Math.ceil(count / pageSize));
-      setLoading(false);
-    }
+        setData(response.data);
+        setPageCount(Math.ceil(count / pageSize));
+        setLoading(false);
+      }
 
-    // Set the loading state
-  }, []);
+      // Set the loading state
+    },
+    [count]
+  );
 
   return <Table columns={columns} data={data} fetchData={fetchData} loading={loading} pageCount={pageCount} />;
 };
