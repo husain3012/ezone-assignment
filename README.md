@@ -1,12 +1,12 @@
 # Next.js With Prisma
-https://ezone-assignment-gm421zqe6-husain3012.vercel.app/
+
+Visit the deployed site at [here](https://ezone-assignment.vercel.app/)
 
 ## Getting started
 
 ### 1. Download example and install dependencies
 
 Download this example:
-
 
 Clone this repository:
 
@@ -63,6 +63,6 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       url: hotel.pageurl,
     };
   });
-    return res.json(hotels);
+  return res.json(hotels);
 };
 ```
