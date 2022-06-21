@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Hotel {
+  id                    String   @id @unique
+  area                  String?
+  city                  String
+  country               String
+  hotel_overview        String?
+  hotel_star_rating     String?
+  latitude              Decimal?
+  longitude             Decimal?
+  mmt_tripadvisor_count String?
+  pageurl               String?
+  property_address      String?
+  property_name         String
+}
