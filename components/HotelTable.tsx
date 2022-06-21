@@ -57,7 +57,7 @@ function Table({ columns, data, fetchData, loading, pageCount: controlledPageCou
               {headerGroup.headers.map((column, idx) => (
                 <th key={idx} className="bg-slate-400 border-2 p-1 sm:p-2 border-black" {...column.getHeaderProps()}>
                   {column.render("Header")}
-                  <span>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
+                  {/* <span>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span> */}
                 </th>
               ))}
             </tr>
@@ -65,6 +65,7 @@ function Table({ columns, data, fetchData, loading, pageCount: controlledPageCou
         </thead>
         <tbody style={{ opacity: loading ? 0.5 : 1 }} {...getTableBodyProps()}>
           {page.map((row, i) => {
+            prepareRow(row);
             return (
               <tr key={i} className="p-3 " {...row.getRowProps()}>
                 {row.cells.map((cell, idx) => {
@@ -182,8 +183,8 @@ const HotelTable = ({ initialData, count }) => {
           {
             Header: "Url",
             accessor: "url",
-            Cell: ({ cell: { value } }) => (
-              <a href={value} target="_blank" rel="noopener noreferrer" className="text-blue-700">
+            Cell: ({ cell }) => (
+              <a href={cell} target="_blank" rel="noopener noreferrer" className="text-blue-700">
                 Visit
               </a>
             ),
