@@ -3,6 +3,7 @@ import { useTable, usePagination } from "react-table";
 import axios from "axios";
 import { useMediaQuery } from "react-responsive";
 import { Bars } from "react-loader-spinner";
+import { BsChevronLeft, BsChevronRight, BsChevronDoubleLeft, BsChevronDoubleRight } from "react-icons/bs";
 // import { IHotel } from "../interfaces";
 
 function Table({ columns, data, fetchData, loading, pageCount: controlledPageCount }) {
@@ -46,7 +47,7 @@ function Table({ columns, data, fetchData, loading, pageCount: controlledPageCou
     <div className=" flex flex-col items-center m-auto  ">
       {loading && (
         <div className="absolute flex items-center content-center m-auto mt-48 ">
-          <Bars color="#000" />
+          <Bars color="blue" />
         </div>
       )}
       <table {...getTableProps()}>
@@ -68,6 +69,7 @@ function Table({ columns, data, fetchData, loading, pageCount: controlledPageCou
             return (
               <tr className="p-3 " {...row.getRowProps()}>
                 {row.cells.map((cell) => {
+
                   return (
                     <td className="border-2 p-1 sm:p-2 w-6 md:w-auto" {...cell.getCellProps()}>
                       {cell.render("Cell")}
@@ -89,17 +91,33 @@ function Table({ columns, data, fetchData, loading, pageCount: controlledPageCou
         This is just a very basic UI implementation:
       */}
       <div className="w-full bg-slate-200 p-2 rounded flex">
-        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {"<<"}
+        <button
+          className="bg-black text-white p-1 mx-1 hover:bg-blue-800 transition-all cursor-pointer disabled:bg-slate-400 disabled:cursor-not-allowed rounded"
+          onClick={() => gotoPage(0)}
+          disabled={!canPreviousPage}
+        >
+          <BsChevronDoubleLeft />
         </button>{" "}
-        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {"<"}
+        <button
+          className="bg-black text-white p-1 mx-1 hover:bg-blue-800 transition-all cursor-pointer disabled:bg-slate-400 disabled:cursor-not-allowed rounded"
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+        >
+          <BsChevronLeft />
         </button>{" "}
-        <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {">"}
+        <button
+          className="bg-black text-white p-1 mx-1 hover:bg-blue-800 transition-all cursor-pointer disabled:bg-slate-400 disabled:cursor-not-allowed rounded"
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+        >
+          <BsChevronRight />
         </button>{" "}
-        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {">>"}
+        <button
+          className="bg-black text-white p-1 mx-1 hover:bg-blue-800 transition-all cursor-pointer disabled:bg-slate-400 disabled:cursor-not-allowed rounded"
+          onClick={() => gotoPage(pageCount - 1)}
+          disabled={!canNextPage}
+        >
+          <BsChevronDoubleRight />
         </button>{" "}
         <span>
           Page{" "}
@@ -120,13 +138,13 @@ function Table({ columns, data, fetchData, loading, pageCount: controlledPageCou
           />
         </span>{" "}
         <select
-        className="ml-auto"
+          className="ml-auto"
           value={pageSize}
           onChange={(e) => {
             setPageSize(Number(e.target.value));
           }}
         >
-          {[10, 20, 30, 40, 50].map((pageSize) => (
+          {[10, 20, 50, 100, 500].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>
@@ -137,8 +155,8 @@ function Table({ columns, data, fetchData, loading, pageCount: controlledPageCou
   );
 }
 
-const HotelTable = () => {
-  const [data, setData] = useState([]);
+const HotelTable = ({ initialData, count }) => {
+  const [data, setData] = useState([...initialData]);
   const [loading, setLoading] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const fetchIdRef = useRef(0);
@@ -163,20 +181,23 @@ const HotelTable = () => {
             Header: "Country",
             accessor: "country",
           },
+          {
+            Header: "Url",
+            accessor: "url",
+            Cell: ({ cell: { value } }) => (
+              <a href={value} target="_blank" rel="noopener noreferrer" className="text-blue-700">
+                Visit
+              </a>
+            ),
+          },
         ],
       },
     ];
     if (isDesktopOrLaptop) {
-      cols[0].columns.push(
-        {
-          Header: "Trip Advisor Rating",
-          accessor: "tripadvisorRating",
-        },
-        {
-          Header: "Area",
-          accessor: "area",
-        }
-      );
+      cols[0].columns.push({
+        Header: "Trip Advisor Rating",
+        accessor: "tripadvisorRating",
+      });
     }
     return cols;
   }, [isDesktopOrLaptop]);
@@ -191,10 +212,9 @@ const HotelTable = () => {
           pageIndex,
         },
       });
-      const count = await axios.get("/api/hotels/count");
 
       setData(response.data);
-      setPageCount(Math.ceil(count.data.count / pageSize));
+      setPageCount(Math.ceil(count / pageSize));
       setLoading(false);
     }
 
